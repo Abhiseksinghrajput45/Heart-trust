@@ -54,7 +54,12 @@ if (headerEl) {
     <nav>
       <ul class="menu">
         ${PAGES.map(([f, n]) => `<li><a href="${f}" class="${f === current ? 'active' : ''}">${n}</a></li>`).join('')}
-        <li><a href="contact.html" class="btn btn-sm">Get Involved</a></li>
+                <li class="menu-contact">
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SITE.address)}" target="_blank" rel="noopener">📍 ${SITE.address}</a>
+          <a href="mailto:${SITE.email}">✉ ${SITE.email}</a>
+          <a href="tel:${SITE.phoneLink}">☎ ${SITE.phone}</a>
+          ${socialHTML()}
+        </li>
       </ul>
     </nav>
   </div></header>`;
@@ -229,3 +234,32 @@ if (sub) {
   window.addEventListener('scroll', () => top.classList.toggle('show', window.scrollY > 500), { passive: true });
 })();
 
+// ---------- Mobile header styles ----------
+// Injected here so EVERY page gets the Menu button, even if its CSS file is old or cached.
+(function () {
+  if (document.getElementById('mobile-header-style')) return;
+  const st = document.createElement('style');
+  st.id = 'mobile-header-style';
+  st.textContent = `
+  .menu-btn{display:none}
+  .menu-contact{display:none}
+  @media (max-width:900px){
+    .topbar{display:none}
+    .nav{height:72px}
+    .logo-img{width:52px;height:52px}
+    .menu-btn{display:inline-flex;align-items:center;gap:8px;margin-left:auto;background:#031329;color:#fff;border:1px solid #1d3b63;border-radius:10px;padding:11px 22px;font:600 16px/1 Roboto,system-ui,sans-serif;cursor:pointer}
+    .menu-btn::after{content:"▾";font-size:12px;transition:transform .25s}
+    .menu-btn[aria-expanded="true"]::after{transform:rotate(180deg)}
+    .menu{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;margin:0;padding:6px 5% 24px;background:#fff;border-top:1px solid #d6e6f5;box-shadow:0 26px 44px rgba(3,19,41,.2);max-height:calc(100vh - 72px);overflow-y:auto}
+    .menu.open{display:flex}
+    .menu li{border-bottom:1px solid #d6e6f5}
+    .menu>li:not(.menu-contact)>a:not(.btn){display:block;padding:16px 4px;font-size:18px;font-weight:500;border-bottom:0!important}
+    .menu li:has(.btn){border-bottom:0;padding-top:18px}
+    .menu .btn{display:block;text-align:center;padding:16px;font-size:16px}
+    .menu-contact{display:block;border-bottom:0!important;padding-top:20px;font-size:14px;line-height:2;color:#5a6b7d}
+        .menu-contact>a{display:block;padding:6px 0;line-height:1.5;color:#0f1f33}
+    .menu-contact .social{margin-top:10px}
+    .menu-contact .social a{background:#031329;color:#fff}
+  }`;
+  document.head.appendChild(st);
+})();
